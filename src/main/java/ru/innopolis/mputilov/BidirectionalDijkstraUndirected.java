@@ -87,11 +87,14 @@ public class BidirectionalDijkstraUndirected {
     }
 
     private void print(Iterable<Edge> edges, int from) {
+        double sum = 0;
         int previous = from;
         for (Edge e : edges) {
+            sum += e.weight();
             System.out.format("%d-%d %f\n", previous, e.other(previous), e.weight());
             previous = e.other(previous);
         }
+        System.out.println(sum);
     }
 
     private boolean isIntersects() {

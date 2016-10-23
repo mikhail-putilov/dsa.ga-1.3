@@ -2,6 +2,7 @@ package ru.innopolis.mputilov;
 
 import edu.princeton.cs.algs4.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -112,10 +113,14 @@ public class BidirectionalDijkstraDirected {
         for (DirectedEdge e = forwardEdgeTo[x]; e != null; e = forwardEdgeTo[e.from()]) {
             path.push(e);
         }
-        for (DirectedEdge e = backwardEdgeTo[x]; e != null; e = backwardEdgeTo[e.from()]) {
-            path.push(new DirectedEdge(e.to(), e.from(), e.weight()));
+        ArrayList<DirectedEdge> edges = new ArrayList<>();
+        for (DirectedEdge e : path) {
+            edges.add(e);
         }
-        return path;
+        for (DirectedEdge e = backwardEdgeTo[x]; e != null; e = backwardEdgeTo[e.from()]) {
+            edges.add(new DirectedEdge(e.to(), e.from(), e.weight()));
+        }
+        return edges;
     }
 
 }
