@@ -27,6 +27,9 @@ public class BidirectionalDijkstraUndirected {
 
 
     public BidirectionalDijkstraUndirected(EdgeWeightedGraph G, int from, int to) {
+        if (from == to) {
+            System.out.format("%d-%d 0.0", from, to);
+        }
         for (Edge e : G.edges()) {
             if (e.weight() < 0)
                 throw new IllegalArgumentException("edge " + e + " has negative weight");
