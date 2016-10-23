@@ -2,7 +2,6 @@ package ru.innopolis.mputilov;
 
 
 import edu.princeton.cs.algs4.EdgeWeightedDigraph;
-import edu.princeton.cs.algs4.EdgeWeightedGraph;
 import edu.princeton.cs.algs4.In;
 
 /**
@@ -10,8 +9,9 @@ import edu.princeton.cs.algs4.In;
  */
 public class Main {
     public static void main(String[] args) {
+        System.out.println("form 0 to 998:");
         In in = new In(Main.class.getClassLoader().getResource("1000ewg.txt").getPath());
         EdgeWeightedDigraph graph = new EdgeWeightedDigraph(in);
-        new BidirectionalDijkstraDirected(graph, 0, 998);
+        new BidirectionalDijkstraDirected(graph, 0, 999);
     }
 }

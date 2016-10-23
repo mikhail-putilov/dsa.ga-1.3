@@ -1,6 +1,9 @@
 package ru.innopolis.mputilov;
 
-import edu.princeton.cs.algs4.*;
+import edu.princeton.cs.algs4.Edge;
+import edu.princeton.cs.algs4.EdgeWeightedGraph;
+import edu.princeton.cs.algs4.IndexMinPQ;
+import edu.princeton.cs.algs4.Stack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,14 +19,12 @@ public class BidirectionalDijkstraUndirected {
 
     private final double[] forwardDistTo;
     private final double[] backwardDistTo;
-
-    private Edge[] forwardEdgeTo;
-    private Edge[] backwardEdgeTo;
-
     private final IndexMinPQ<Double> forwardPq;
     private final IndexMinPQ<Double> backwardPq;
     private final Set<Integer> forwardAlreadyProcessedNodes;
     private final Set<Integer> backwardAlreadyProcessedNodes;
+    private Edge[] forwardEdgeTo;
+    private Edge[] backwardEdgeTo;
 
 
     public BidirectionalDijkstraUndirected(EdgeWeightedGraph G, int from, int to) {

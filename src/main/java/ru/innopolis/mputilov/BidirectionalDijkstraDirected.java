@@ -1,6 +1,9 @@
 package ru.innopolis.mputilov;
 
-import edu.princeton.cs.algs4.*;
+import edu.princeton.cs.algs4.DirectedEdge;
+import edu.princeton.cs.algs4.EdgeWeightedDigraph;
+import edu.princeton.cs.algs4.IndexMinPQ;
+import edu.princeton.cs.algs4.Stack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,13 +18,12 @@ public class BidirectionalDijkstraDirected {
 
     private final double[] forwardDistTo;
     private final double[] backwardDistTo;
-    private DirectedEdge[] forwardEdgeTo;
-    private DirectedEdge[] backwardEdgeTo;
-
     private final IndexMinPQ<Double> forwardPq;
     private final IndexMinPQ<Double> backwardPq;
     private final Set<Integer> forwardAlreadyProcessedNodes;
     private final Set<Integer> backwardAlreadyProcessedNodes;
+    private DirectedEdge[] forwardEdgeTo;
+    private DirectedEdge[] backwardEdgeTo;
 
 
     public BidirectionalDijkstraDirected(EdgeWeightedDigraph G, int from, int to) {
@@ -47,7 +49,7 @@ public class BidirectionalDijkstraDirected {
         forwardPq.insert(from, forwardDistTo[from]);
         backwardPq.insert(to, backwardDistTo[to]);
 
-        while (!forwardPq.isEmpty() || !backwardPq.isEmpty()) {
+        while (!forwardPq.isEmpty() && !backwardPq.isEmpty()) {
             int forwardV = forwardPq.delMin();
             for (DirectedEdge forwardE : G.adj(forwardV)) {
                 forwardRelax(forwardE);
