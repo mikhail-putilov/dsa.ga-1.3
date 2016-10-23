@@ -19,11 +19,4 @@
             <email>m.putilov@innopolis.ru</email>
         </developer>
     </developers>
-    <dependencies>
-        <dependency>
-            <groupId>edu.princeton.cs</groupId>
-            <artifactId>algs4</artifactId>
-            <version>1.0.0.0</version>
-        </dependency>
-    </dependencies>
 </project>
