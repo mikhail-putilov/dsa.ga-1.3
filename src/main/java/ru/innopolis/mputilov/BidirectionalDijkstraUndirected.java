@@ -94,7 +94,7 @@ public class BidirectionalDijkstraUndirected {
             System.out.format("%d-%d %f\n", previous, e.other(previous), e.weight());
             previous = e.other(previous);
         }
-        System.out.println(sum);
+        System.out.println("sum of path: " + sum);
     }
 
     private boolean isIntersects() {

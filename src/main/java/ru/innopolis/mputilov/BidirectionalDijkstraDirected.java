@@ -75,11 +75,20 @@ public class BidirectionalDijkstraDirected {
         }
 
         if (x != Integer.MAX_VALUE) {
-            restorePath(to, x).forEach(System.out::println);
+            print(restorePath(to, x));
         } else {
             System.out.println("Search didnt find the path!");
         }
 
+    }
+
+    private void print(Iterable<DirectedEdge> edges) {
+        double sum = 0;
+        for (DirectedEdge e : edges) {
+            sum += e.weight();
+            System.out.format("%d-%d %f\n", e.from(), e.to(), e.weight());
+        }
+        System.out.println("sum of path: " + sum);
     }
 
     private boolean isIntersects() {
