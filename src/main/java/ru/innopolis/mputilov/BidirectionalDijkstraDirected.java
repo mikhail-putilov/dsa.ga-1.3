@@ -10,15 +10,12 @@ import java.util.Set;
  * Created by mputilov on 23/10/16.
  */
 @SuppressWarnings("Duplicates")
-public class BidirectionalDijkstra {
+public class BidirectionalDijkstraDirected {
 
     private final double[] forwardDistTo;
     private final double[] backwardDistTo;
     private DirectedEdge[] forwardEdgeTo;
     private DirectedEdge[] backwardEdgeTo;
-
-    private Edge[] uforwardEdgeTo;
-    private Edge[] ubackwardEdgeTo;
 
     private final IndexMinPQ<Double> forwardPq;
     private final IndexMinPQ<Double> backwardPq;
@@ -26,7 +23,7 @@ public class BidirectionalDijkstra {
     private final Set<Integer> backwardAlreadyProcessedNodes;
 
 
-    public BidirectionalDijkstra(EdgeWeightedDigraph G, int from, int to) {
+    public BidirectionalDijkstraDirected(EdgeWeightedDigraph G, int from, int to) {
         for (DirectedEdge e : G.edges()) {
             if (e.weight() < 0)
                 throw new IllegalArgumentException("edge " + e + " has negative weight");
@@ -85,64 +82,6 @@ public class BidirectionalDijkstra {
 
     }
 
-    public BidirectionalDijkstra(EdgeWeightedGraph G, int from, int to) {
-        for (Edge e : G.edges()) {
-            if (e.weight() < 0)
-                throw new IllegalArgumentException("edge " + e + " has negative weight");
-        }
-
-        forwardDistTo = new double[G.V()];
-        backwardDistTo = new double[G.V()];
-        forwardAlreadyProcessedNodes = new HashSet<>();
-        backwardAlreadyProcessedNodes = new HashSet<>();
-        uforwardEdgeTo = new Edge[G.V()];
-        ubackwardEdgeTo = new Edge[G.V()];
-        Arrays.fill(forwardDistTo, Double.POSITIVE_INFINITY);
-        Arrays.fill(backwardDistTo, Double.POSITIVE_INFINITY);
-        forwardDistTo[from] = 0.0;
-        backwardDistTo[to] = 0.0;
-
-        // forwardRelax vertices in order of distance from s
-        forwardPq = new IndexMinPQ<>(G.V());
-        backwardPq = new IndexMinPQ<>(G.V());
-        forwardPq.insert(from, forwardDistTo[from]);
-        backwardPq.insert(to, backwardDistTo[to]);
-
-        while (!forwardPq.isEmpty() && !backwardPq.isEmpty()) {
-            int forwardV = forwardPq.delMin();
-            for (Edge forwardE : G.adj(forwardV)) {
-                forwardRelax(forwardE);
-            }
-            int backwardV = backwardPq.delMin();
-            for (Edge backwardE : G.adj(backwardV)) {
-                backwardRelax(backwardE);
-            }
-
-            forwardAlreadyProcessedNodes.add(forwardV);
-            backwardAlreadyProcessedNodes.add(backwardV);
-            if (isIntersects()) {
-                break;
-            }
-        }
-        Set<Integer> processedNodesWithMinimumSize = forwardAlreadyProcessedNodes.size() < backwardAlreadyProcessedNodes.size() ? forwardAlreadyProcessedNodes : backwardAlreadyProcessedNodes;
-        double minPath = Double.POSITIVE_INFINITY;
-        int x = Integer.MAX_VALUE;
-        for (Integer processedNode : processedNodesWithMinimumSize) {
-            double pathCost = forwardDistTo[processedNode] + backwardDistTo[processedNode];
-            if (pathCost < minPath) {
-                minPath = pathCost;
-                x = processedNode;
-            }
-        }
-
-        if (x != Integer.MAX_VALUE) {
-            System.out.println("ok!");
-            urestorePath(to, x).forEach(System.out::println);
-        } else {
-            System.out.println("not ok!");
-        }
-    }
-
     private boolean isIntersects() {
         Set<Integer> intersection = new HashSet<>(forwardAlreadyProcessedNodes); // use the copy constructor
         intersection.retainAll(backwardAlreadyProcessedNodes);
@@ -159,30 +98,11 @@ public class BidirectionalDijkstra {
         }
     }
 
-    private void forwardRelax(Edge e) {
-        int v = e.either(), w = e.other(e.either());
-        if (forwardDistTo[w] > forwardDistTo[v] + e.weight()) {
-            forwardDistTo[w] = forwardDistTo[v] + e.weight();
-            uforwardEdgeTo[w] = e;
-            if (forwardPq.contains(w)) forwardPq.decreaseKey(w, forwardDistTo[w]);
-            else forwardPq.insert(w, forwardDistTo[w]);
-        }
-    }
-
     private void backwardRelax(DirectedEdge e) {
         int v = e.from(), w = e.to();
         if (backwardDistTo[w] > backwardDistTo[v] + e.weight()) {
             backwardDistTo[w] = backwardDistTo[v] + e.weight();
             backwardEdgeTo[w] = e;
-            if (backwardPq.contains(w)) backwardPq.decreaseKey(w, backwardDistTo[w]);
-            else backwardPq.insert(w, backwardDistTo[w]);
-        }
-    }
-    private void backwardRelax(Edge e) {
-        int v = e.either(), w = e.other(e.either());
-        if (backwardDistTo[w] > backwardDistTo[v] + e.weight()) {
-            backwardDistTo[w] = backwardDistTo[v] + e.weight();
-            ubackwardEdgeTo[w] = e;
             if (backwardPq.contains(w)) backwardPq.decreaseKey(w, backwardDistTo[w]);
             else backwardPq.insert(w, backwardDistTo[w]);
         }
@@ -199,14 +119,4 @@ public class BidirectionalDijkstra {
         return path;
     }
 
-    public Iterable<Edge> urestorePath(int v, int x) {
-        Stack<Edge> path = new Stack<>();
-        for (Edge e = uforwardEdgeTo[x]; e != null; e = uforwardEdgeTo[e.either()]) {
-            path.push(e);
-        }
-        for (Edge e = ubackwardEdgeTo[x]; e != null; e = ubackwardEdgeTo[e.either()]) {
-            path.push(new Edge(e.either(), e.other(e.either()), e.weight()));
-        }
-        return path;
-    }
 }

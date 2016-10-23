@@ -10,8 +10,8 @@ import edu.princeton.cs.algs4.In;
 public class Main {
     public static void main(String[] args) {
         In in = new In(Main.class.getClassLoader().getResource("1000ewg.txt").getPath());
-        EdgeWeightedGraph digraph = new EdgeWeightedGraph(in);
-        new BidirectionalDijkstra(digraph, 541, 450);
+        EdgeWeightedGraph graph = new EdgeWeightedGraph(in);
+        new BidirectionalDijkstra(graph, 0, 431);
         System.out.println();
     }
 }
