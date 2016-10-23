@@ -2,6 +2,7 @@ package ru.innopolis.mputilov;
 
 import edu.princeton.cs.algs4.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,12 +11,13 @@ import java.util.Set;
  * Created by mputilov on 23/10/16.
  */
 @SuppressWarnings("Duplicates")
-public class BidirectionalDijkstraDirected {
+public class BidirectionalDijkstraUndirected {
 
     private final double[] forwardDistTo;
     private final double[] backwardDistTo;
-    private DirectedEdge[] forwardEdgeTo;
-    private DirectedEdge[] backwardEdgeTo;
+
+    private Edge[] forwardEdgeTo;
+    private Edge[] backwardEdgeTo;
 
     private final IndexMinPQ<Double> forwardPq;
     private final IndexMinPQ<Double> backwardPq;
@@ -23,8 +25,8 @@ public class BidirectionalDijkstraDirected {
     private final Set<Integer> backwardAlreadyProcessedNodes;
 
 
-    public BidirectionalDijkstraDirected(EdgeWeightedDigraph G, int from, int to) {
-        for (DirectedEdge e : G.edges()) {
+    public BidirectionalDijkstraUndirected(EdgeWeightedGraph G, int from, int to) {
+        for (Edge e : G.edges()) {
             if (e.weight() < 0)
                 throw new IllegalArgumentException("edge " + e + " has negative weight");
         }
@@ -33,8 +35,8 @@ public class BidirectionalDijkstraDirected {
         backwardDistTo = new double[G.V()];
         forwardAlreadyProcessedNodes = new HashSet<>();
         backwardAlreadyProcessedNodes = new HashSet<>();
-        forwardEdgeTo = new DirectedEdge[G.V()];
-        backwardEdgeTo = new DirectedEdge[G.V()];
+        forwardEdgeTo = new Edge[G.V()];
+        backwardEdgeTo = new Edge[G.V()];
         Arrays.fill(forwardDistTo, Double.POSITIVE_INFINITY);
         Arrays.fill(backwardDistTo, Double.POSITIVE_INFINITY);
         forwardDistTo[from] = 0.0;
@@ -46,13 +48,13 @@ public class BidirectionalDijkstraDirected {
         forwardPq.insert(from, forwardDistTo[from]);
         backwardPq.insert(to, backwardDistTo[to]);
 
-        while (!forwardPq.isEmpty() || !backwardPq.isEmpty()) {
+        while (!forwardPq.isEmpty() && !backwardPq.isEmpty()) {
             int forwardV = forwardPq.delMin();
-            for (DirectedEdge forwardE : G.adj(forwardV)) {
+            for (Edge forwardE : G.adj(forwardV)) {
                 forwardRelax(forwardE);
             }
             int backwardV = backwardPq.delMin();
-            for (DirectedEdge backwardE : G.revadj(backwardV)) {
+            for (Edge backwardE : G.adj(backwardV)) {
                 backwardRelax(backwardE);
             }
 
@@ -78,7 +80,6 @@ public class BidirectionalDijkstraDirected {
         } else {
             System.out.println("Search didnt find the path!");
         }
-
     }
 
     private boolean isIntersects() {
@@ -87,8 +88,8 @@ public class BidirectionalDijkstraDirected {
         return !intersection.isEmpty();
     }
 
-    private void forwardRelax(DirectedEdge e) {
-        int v = e.from(), w = e.to();
+    private void forwardRelax(Edge e) {
+        int v = e.either(), w = e.other(e.either());
         if (forwardDistTo[w] > forwardDistTo[v] + e.weight()) {
             forwardDistTo[w] = forwardDistTo[v] + e.weight();
             forwardEdgeTo[w] = e;
@@ -97,8 +98,8 @@ public class BidirectionalDijkstraDirected {
         }
     }
 
-    private void backwardRelax(DirectedEdge e) {
-        int v = e.from(), w = e.to();
+    private void backwardRelax(Edge e) {
+        int v = e.either(), w = e.other(e.either());
         if (backwardDistTo[w] > backwardDistTo[v] + e.weight()) {
             backwardDistTo[w] = backwardDistTo[v] + e.weight();
             backwardEdgeTo[w] = e;
@@ -107,15 +108,19 @@ public class BidirectionalDijkstraDirected {
         }
     }
 
-    public Iterable<DirectedEdge> restorePath(int v, int x) {
-        Stack<DirectedEdge> path = new Stack<>();
-        for (DirectedEdge e = forwardEdgeTo[x]; e != null; e = forwardEdgeTo[e.from()]) {
+
+    public Iterable<Edge> restorePath(int v, int x) {
+        Stack<Edge> path = new Stack<>();
+        for (Edge e = forwardEdgeTo[x]; e != null; e = forwardEdgeTo[e.either()]) {
             path.push(e);
         }
-        for (DirectedEdge e = backwardEdgeTo[x]; e != null; e = backwardEdgeTo[e.from()]) {
-            path.push(new DirectedEdge(e.to(), e.from(), e.weight()));
+        ArrayList<Edge> edges = new ArrayList<>();
+        for (Edge e : path) {
+            edges.add(e);
         }
-        return path;
+        for (Edge e = backwardEdgeTo[x]; e != null; e = backwardEdgeTo[e.either()]) {
+            edges.add(new Edge(e.other(e.either()), e.either(), e.weight()));
+        }
+        return edges;
     }
-
 }
