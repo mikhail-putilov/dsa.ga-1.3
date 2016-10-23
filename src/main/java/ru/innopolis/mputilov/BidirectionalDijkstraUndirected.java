@@ -125,21 +125,21 @@ public class BidirectionalDijkstraUndirected {
     }
 
 
-    public Iterable<Edge> restorePath(int x) {
+    public Iterable<Edge> restorePath(int specialVertex) {
         Stack<Edge> path = new Stack<>();
-        int y = x;
-        for (Edge e = forwardEdgeTo[x]; e != null; e = forwardEdgeTo[y]) {
+        int i = specialVertex;
+        for (Edge e = forwardEdgeTo[specialVertex]; e != null; e = forwardEdgeTo[i]) {
             path.push(e);
-            y = e.other(y);
+            i = e.other(i);
         }
         ArrayList<Edge> edges = new ArrayList<>();
         for (Edge e : path) {
             edges.add(e);
         }
-        y = x;
-        for (Edge e = backwardEdgeTo[x]; e != null; e = backwardEdgeTo[y]) {
+        i = specialVertex;
+        for (Edge e = backwardEdgeTo[specialVertex]; e != null; e = backwardEdgeTo[i]) {
             edges.add(e);
-            y = e.other(y);
+            i = e.other(i);
         }
         return edges;
     }

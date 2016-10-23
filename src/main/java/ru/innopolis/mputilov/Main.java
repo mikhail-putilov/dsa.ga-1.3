@@ -12,6 +12,6 @@ public class Main {
         System.out.println("form 0 to 998:");
         In in = new In(Main.class.getClassLoader().getResource("1000ewg.txt").getPath());
         EdgeWeightedDigraph graph = new EdgeWeightedDigraph(in);
-        new BidirectionalDijkstraDirected(graph, 0, 999);
+        new BidirectionalDijkstraDirected(graph, 0, 998);
     }
 }

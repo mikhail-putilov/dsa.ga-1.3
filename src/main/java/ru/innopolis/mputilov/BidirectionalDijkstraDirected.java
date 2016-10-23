@@ -77,7 +77,7 @@ public class BidirectionalDijkstraDirected {
         }
 
         if (x != Integer.MAX_VALUE) {
-            print(restorePath(to, x));
+            print(restorePath(x));
         } else {
             System.out.println("Search didnt find the path!");
         }
@@ -119,16 +119,16 @@ public class BidirectionalDijkstraDirected {
         }
     }
 
-    public Iterable<DirectedEdge> restorePath(int v, int x) {
+    public Iterable<DirectedEdge> restorePath(int specialVertex) {
         Stack<DirectedEdge> path = new Stack<>();
-        for (DirectedEdge e = forwardEdgeTo[x]; e != null; e = forwardEdgeTo[e.from()]) {
+        for (DirectedEdge e = forwardEdgeTo[specialVertex]; e != null; e = forwardEdgeTo[e.from()]) {
             path.push(e);
         }
         ArrayList<DirectedEdge> edges = new ArrayList<>();
         for (DirectedEdge e : path) {
             edges.add(e);
         }
-        for (DirectedEdge e = backwardEdgeTo[x]; e != null; e = backwardEdgeTo[e.from()]) {
+        for (DirectedEdge e = backwardEdgeTo[specialVertex]; e != null; e = backwardEdgeTo[e.from()]) {
             edges.add(new DirectedEdge(e.to(), e.from(), e.weight()));
         }
         return edges;
