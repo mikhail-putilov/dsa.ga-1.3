@@ -77,9 +77,17 @@ public class BidirectionalDijkstraUndirected {
         }
 
         if (x != Integer.MAX_VALUE) {
-            restorePath(x).forEach(System.out::println);
+            print(restorePath(x), from);
         } else {
             System.out.println("Search didnt find the path!");
+        }
+    }
+
+    private void print(Iterable<Edge> edges, int from) {
+        int previous = from;
+        for (Edge e : edges) {
+            System.out.format("%d-%d %f\n", previous, e.other(previous), e.weight());
+            previous = e.other(previous);
         }
     }
 
